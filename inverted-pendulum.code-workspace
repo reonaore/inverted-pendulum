@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "firm",
+			"path": "firm"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.yml": "yaml",
+			"istream": "cpp",
+			"ostream": "cpp"
+		}
+	}
+}
