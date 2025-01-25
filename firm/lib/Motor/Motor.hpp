@@ -34,7 +34,6 @@ class Motor {
         new PwmController(PwmChannels::CH0, front, pwmFrequency, resolutionBit);
     auto b =
         new PwmController(PwmChannels::CH1, back, pwmFrequency, resolutionBit);
-    b->setDuty(200);
     return new Motor(f, b);
   }
   uint16_t setVoltage(double v) {
