@@ -8,7 +8,6 @@ std::unique_ptr<Motor> motor;
 // std::unique_ptr<PwmController> pwmA;
 
 void setup() {
-  // put your setup code here, to run once:
   M5.begin(M5.config());
   motor.reset(Motor::create(IoPins::IO0, IoPins::IO26));
   // pwmA.reset(new PwmController(PwmChannels::CH0, IoPins::IO0));
@@ -16,19 +15,18 @@ void setup() {
   M5.Display.setRotation(1);
   StickCP2.Display.setTextDatum(middle_center);
   StickCP2.Display.setFont(&fonts::Orbitron_Light_24);
-  M5.Display.setTextSize(1);
+  M5.Display.setTextSize(0.5);
 }
 
 double v = 0.0;
 bool started = false;
-double vDiff = 1.0;
+double vDiff = 0.1;
 
 void loop() {
   M5.update();
-  M5.Display.clearDisplay();
   M5.Display.setCursor(10, 30);
-  M5.Display.printf("volt = %2.1f", v);
-  if (M5.BtnA.isPressed()) {
+  M5.Display.printf("volt = %03.2f\t ", v);
+  if (M5.BtnA.wasPressed()) {
     started = !started;
   }
   if (started) {
@@ -47,6 +45,6 @@ void loop() {
   }
   auto duty = motor.get()->setVoltage(v);
   M5.Display.setCursor(10, 70);
-  M5.Display.printf("duty = %d", duty);
-  delay(1000);
+  M5.Display.printf("duty = %03d\t ", duty);
+  delay(500);
 }

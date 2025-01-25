@@ -13,7 +13,6 @@ class PwmController {
   const uint8_t pwmCh;
   const uint32_t resolution;
   const uint8_t pinNo;
-  // uint16_t duty = 0;
 
   void setup() {
     pinMode(pinNo, OUTPUT);
@@ -24,26 +23,15 @@ class PwmController {
  public:
   static const uint32_t defaultHz = 312500;
   static const uint32_t defaultResolution = 8;  // bit
-  // static const uint32_t defaultHz = 78125;
-  // static const uint32_t defaultResolution = 10;  // bit
   PwmController() = delete;
   PwmController(PwmChannels pwmCh, IoPins pinNo, uint32_t freq = defaultHz,
                 uint32_t resolution = defaultResolution)
       : freq(freq), pwmCh(pwmCh), resolution(resolution), pinNo(pinNo) {
-    // setup();
-    pinMode(pinNo, OUTPUT);
-    ledcSetup(pwmCh, freq, resolution);
-    ledcAttachPin(pinNo, pwmCh);
+    setup();
   };
-  ~PwmController() {
-    // this->duty = 0;
-    setDuty(0);
-  };
+  ~PwmController() { setDuty(0); };
 
-  void setDuty(uint32_t duty) {
-    // this->duty = duty;
-    ledcWrite(pwmCh, duty);
-  };
+  void setDuty(uint32_t duty) { ledcWrite(pwmCh, duty); };
 };
 
 #endif

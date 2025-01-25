@@ -1,15 +1,17 @@
 #ifndef _MOTOR_HPP_
 #define _MOTOR_HPP_
 #include <PwmController.hpp>
+#include <hardware.hpp>
 
 class Motor {
  private:
   /* data */
-  static constexpr double maxVoltage = 5.0;
   static const uint8_t resolutionBit = 10;  // bit
   static const uint16_t resolution = 1024;
   static const uint32_t pwmFrequency = 78125;  // Hz
-  static constexpr double dutyStep = (resolution / maxVoltage);
+  static constexpr double dutyStep = (resolution / VCC);
+  const std::unique_ptr<PwmController> front;
+  const std::unique_ptr<PwmController> back;
 
  public:
   static uint16_t duty(double v) {
@@ -20,8 +22,6 @@ class Motor {
     return round(duty);
   }
 
-  const std::unique_ptr<PwmController> front;
-  const std::unique_ptr<PwmController> back;
   Motor() = delete;
   Motor(PwmController *front, PwmController *back) : front(front), back(back) {
     this->setVoltage(0);
