@@ -12,7 +12,11 @@
 		"files.associations": {
 			"*.yml": "yaml",
 			"istream": "cpp",
-			"ostream": "cpp"
+			"ostream": "cpp",
+			"__hash_table": "cpp",
+			"locale": "cpp",
+			"*.tcc": "cpp",
+			"algorithm": "cpp"
 		}
 	}
 }
