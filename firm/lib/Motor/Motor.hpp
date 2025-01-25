@@ -6,9 +6,6 @@ class Motor {
  private:
   /* data */
   static constexpr double maxVoltage = 5.0;
-  // static const uint8_t resolutionBit = 8;  // bit
-  // static const uint16_t resolution = 256;
-  // static const uint32_t pwmFrequency = 312500;  // Hz
   static const uint8_t resolutionBit = 10;  // bit
   static const uint16_t resolution = 1024;
   static const uint32_t pwmFrequency = 78125;  // Hz
