@@ -38,7 +38,8 @@
 			"unordered_map": "cpp",
 			"unordered_set": "cpp",
 			"vector": "cpp",
-			"memory": "cpp"
+			"memory": "cpp",
+			"cmath": "cpp"
 		}
 	}
 }
