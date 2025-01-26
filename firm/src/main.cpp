@@ -54,6 +54,8 @@ void vUpdateDisplay(void *pvParameters) {
 }
 
 void setup() {
+  auto config = M5.config();
+  config.serial_baudrate = 115200;
   M5.begin(M5.config());
   motor.reset(Motor::create(IoPins::IO0, IoPins::IO26));
   xTaskCreateUniversal(vUpdateImu, "update imu task",
