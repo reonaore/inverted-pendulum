@@ -31,9 +31,9 @@ class Imu {
     xTaskCreate(taskEntryKalman, "update imu task kalman",
                 CONFIG_ARDUINO_LOOP_STACK_SIZE, this, tskIDLE_PRIORITY + 1,
                 &kalmanTaskHandle);
-    // xTaskCreate(taskEntryMadgwick, "update imu task madgwick",
-    //             CONFIG_ARDUINO_LOOP_STACK_SIZE, this, tskIDLE_PRIORITY + 1,
-    //             &madgwickTaskHandle);
+    xTaskCreate(taskEntryMadgwick, "update imu task madgwick",
+                CONFIG_ARDUINO_LOOP_STACK_SIZE, this, tskIDLE_PRIORITY + 1,
+                &madgwickTaskHandle);
   }
 
   void vUpdateImuMadgwick() {
