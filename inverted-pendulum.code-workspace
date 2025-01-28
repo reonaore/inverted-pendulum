@@ -16,7 +16,30 @@
 			"__hash_table": "cpp",
 			"locale": "cpp",
 			"*.tcc": "cpp",
-			"algorithm": "cpp"
+			"algorithm": "cpp",
+			"__bit_reference": "cpp",
+			"__config": "cpp",
+			"__split_buffer": "cpp",
+			"__tree": "cpp",
+			"array": "cpp",
+			"chrono": "cpp",
+			"deque": "cpp",
+			"filesystem": "cpp",
+			"forward_list": "cpp",
+			"initializer_list": "cpp",
+			"iterator": "cpp",
+			"list": "cpp",
+			"map": "cpp",
+			"print": "cpp",
+			"queue": "cpp",
+			"random": "cpp",
+			"string": "cpp",
+			"string_view": "cpp",
+			"unordered_map": "cpp",
+			"unordered_set": "cpp",
+			"vector": "cpp",
+			"memory": "cpp",
+			"cmath": "cpp"
 		}
 	}
 }
