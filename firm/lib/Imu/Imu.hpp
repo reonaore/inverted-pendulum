@@ -46,6 +46,8 @@ class Imu {
     while (1) {
       vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(taskPeriodMs));
       filter.updateIMU(gyro.x, gyro.y, gyro.z, accel.x, accel.y, accel.z);
+      // this->angle.x = filter.getRoll();
+      // this->angle.y = filter.getPitch();
     }
   }
 
@@ -56,17 +58,17 @@ class Imu {
       vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(taskPeriodMs));
       M5.Imu.update();
       auto data = M5.Imu.getImuData();
-      auto angle = calcDegreeFromAccel(data.accel);
+      auto calculatedAngle = calcDegreeFromAccel(data.accel);
       if (!initialized) {
-        kalmanFilterX.setAngle(angle.x);
-        kalmanFilterY.setAngle(angle.y);
+        kalmanFilterX.setAngle(calculatedAngle.x);
+        kalmanFilterY.setAngle(calculatedAngle.y);
         initialized = !initialized;
-      } else {
-        this->angle.x = kalmanFilterX.getAngle(angle.x, data.gyro.x, dt);
-        this->angle.y = kalmanFilterY.getAngle(angle.y, data.gyro.y, dt);
-        this->gyro = data.gyro;
-        this->accel = data.accel;
+        continue;
       }
+      this->angle.x = kalmanFilterX.getAngle(calculatedAngle.x, data.gyro.x, dt);
+      this->angle.y = kalmanFilterY.getAngle(calculatedAngle.y, data.gyro.y, dt);
+      this->gyro = data.gyro;
+      this->accel = data.accel;
     }
   }
 
