@@ -34,6 +34,13 @@ class Motor {
     return new Motor(f, b);
   }
   uint16_t setVoltage(double v) {
+    if (abs(v) < 0.4) {
+      if (v > 0) {
+        v = 0.4;
+      } else {
+        v = -0.4;
+      }
+    }
     auto d = duty(v);
     if (v >= 0) {
       front->setDuty(d);

@@ -38,11 +38,11 @@ void setup() {
 
 void loop() {
   delay(1000);
-  // auto v = ctrl->getInput();
-  // auto angle = ctrl->getCurrentAngle();
-  // StickCP2.Display.setCursor(0, 10);
-  // StickCP2.Display.printf(
-  //     "\t v = %5.3f\n"
-  //     "\t angle = %5.3f\n",
-  //     v, angle.x);
+  auto v = ctrl->getInput();
+  auto angle = ctrl->getCurrentAngle();
+  StickCP2.Display.setCursor(0, 10);
+  StickCP2.Display.printf(
+      "\t v = %5.3f\n"
+      "\t angle = %5.3f\n",
+      v, angle.x);
 }

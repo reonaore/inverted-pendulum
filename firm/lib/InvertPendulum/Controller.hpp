@@ -42,7 +42,7 @@ using namespace control;
 class Controller {
  private:
   /* data */
-  Gain gain = Gain(0.3, 0.0001, 0.1);
+  Gain gain = Gain(0.35, 0.035, 0.03);
 
   static constexpr double taskPeriodMs = 20;
   static constexpr double targetAngle = 90.0;
