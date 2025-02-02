@@ -30,6 +30,25 @@ class MyServer {
     server->send(201, "application/json", "");
   }
 
+  void getTargetAngleHandler() {
+    auto angle = controller->getTargetAngle();
+    server->send(200, "application/json",
+                 "{\"angle\":\"" + String(angle) + "\"}");
+  }
+
+  void setTargetAngleHandler() {
+    if (!server->hasArg("plain")) {
+      returnInvalidRequest();
+      return;
+    }
+    JsonDocument doc;
+    // todo: error handling
+    deserializeJson(doc, server->arg("plain"));
+    auto angle = controller->updateTargetAngle(doc["angle"]);
+    server->send(200, "application/json",
+                 "{\"angle\":\"" + String(angle) + "\"}");
+  }
+
   void listen() {
     while (1) {
       server->handleClient();
@@ -54,6 +73,10 @@ class MyServer {
                std::bind(&MyServer::getParameterHandler, this));
     server->on("/controller/parameters", HTTP_POST,
                std::bind(&MyServer::setParameterHandler, this));
+    server->on("/controller/target-angle", HTTP_GET,
+               std::bind(&MyServer::getTargetAngleHandler, this));
+    server->on("/controller/target-angle", HTTP_POST,
+               std::bind(&MyServer::setTargetAngleHandler, this));
     start();
   };
   ~MyServer() {

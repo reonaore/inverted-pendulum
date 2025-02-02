@@ -42,25 +42,29 @@ using namespace control;
 class Controller {
  private:
   /* data */
-  Gain gain = Gain(0.35, 0.035, 0.03);
-
   static constexpr double taskPeriodMs = 20;
-  static constexpr double targetAngle = 90.0;
+
+  Gain gain = Gain(0.35, 0.035, 0.03);
+  double targetAngle = 90.0;
+
   std::unique_ptr<Motor> motor;
   std::unique_ptr<Imu> imu;
 
   xTaskHandle taskHandle = 0;
-
   double ePrev = 0.0;
   double eSum = 0.0;
   boolean stopped = false;
   double inputV = 0.0;
+
   void stopControl() {
+    if (stopped) {
+      return;
+    }
     ePrev = 0;
     eSum = 0;
-    stopped = true;
     inputV = 0.0;
     motor->setVoltage(inputV);
+    stopped = true;
   }
   // for graph
   imu_3d_t currentAngle;
@@ -83,14 +87,11 @@ class Controller {
       auto e = targetAngle - getAngle().x;
       if (abs(e) > 20) {
         stopControl();
+        continue;
       } else if (abs(e) < 2) {
         stopped = false;
       }
-      if (stopped) {
-        continue;
-      }
       eSum += e;
-      // eSum = cap(eSum, 1000);
       auto pV = e * gain.kp;
       auto iV = eSum * gain.ki;
       auto dV = (e - ePrev) / taskPeriodMs * gain.kd;
@@ -102,7 +103,7 @@ class Controller {
   static void taskEntry(void* arg) {
     static_cast<Controller*>(arg)->mainLoop();
   }
-  void createTask() {
+  void start() {
     xTaskCreate(taskEntry, "main control loop", CONFIG_ARDUINO_LOOP_STACK_SIZE,
                 this, tskIDLE_PRIORITY + 2, &taskHandle);
   }
@@ -112,7 +113,15 @@ class Controller {
   const Gain getGain() { return this->gain; }
   const double getInput() { return inputV; };
   const imu_3d_t getCurrentAngle() { return currentAngle; }
-  Controller(Motor* motor, Imu* imu) : imu(imu), motor(motor) { createTask(); };
+  const double getTargetAngle() { return targetAngle; }
+  int updateTargetAngle(double angle) {
+    if (angle > 110 || angle < 70) {
+      return -1;
+    }
+    targetAngle = angle;
+    return 0;
+  }
+  Controller(Motor* motor, Imu* imu) : imu(imu), motor(motor) { start(); };
   ~Controller() {
     if (taskHandle) {
       vTaskDelete(taskHandle);
