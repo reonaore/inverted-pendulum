@@ -18,7 +18,7 @@ std::unique_ptr<wifiConfig> wifi;
 void setup() {
   auto config = M5.config();
   config.serial_baudrate = 115200;
-  M5.begin(M5.config());
+  StickCP2.begin(config);
   if (!SPIFFS.begin(true)) {
     throw "SPIFFS mount failed";
   }
@@ -38,11 +38,11 @@ void setup() {
 
 void loop() {
   delay(1000);
-  // auto v = ctrl->getInput();
-  // auto angle = ctrl->getCurrentAngle();
-  // StickCP2.Display.setCursor(0, 10);
-  // StickCP2.Display.printf(
-  //     "\t v = %5.3f\n"
-  //     "\t angle = %5.3f\n",
-  //     v, angle.x);
+  auto v = ctrl->getInput();
+  auto angle = ctrl->getCurrentAngle();
+  StickCP2.Display.setCursor(0, 10);
+  StickCP2.Display.printf(
+      "\t v = %5.3f\n"
+      "\t angle = %5.3f\n",
+      v, angle.x);
 }

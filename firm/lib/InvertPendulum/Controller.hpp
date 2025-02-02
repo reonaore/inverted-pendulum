@@ -57,12 +57,9 @@ class Controller {
   double inputV = 0.0;
 
   void stopControl() {
-    if (stopped) {
-      return;
-    }
+    inputV = 0.0;
     ePrev = 0;
     eSum = 0;
-    inputV = 0.0;
     motor->setVoltage(inputV);
     stopped = true;
   }
@@ -88,8 +85,11 @@ class Controller {
       if (abs(e) > 20) {
         stopControl();
         continue;
-      } else if (abs(e) < 2) {
+      } else if (abs(e) < 1) {
         stopped = false;
+      }
+      if (stopped) {
+        continue;
       }
       eSum += e;
       auto pV = e * gain.kp;
@@ -105,7 +105,7 @@ class Controller {
   }
   void start() {
     xTaskCreate(taskEntry, "main control loop", CONFIG_ARDUINO_LOOP_STACK_SIZE,
-                this, tskIDLE_PRIORITY + 2, &taskHandle);
+                this, tskIDLE_PRIORITY + 4, &taskHandle);
   }
 
  public:

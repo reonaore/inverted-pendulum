@@ -44,9 +44,13 @@ class MyServer {
     JsonDocument doc;
     // todo: error handling
     deserializeJson(doc, server->arg("plain"));
-    auto angle = controller->updateTargetAngle(doc["angle"]);
-    server->send(200, "application/json",
-                 "{\"angle\":\"" + String(angle) + "\"}");
+    auto res = controller->updateTargetAngle(doc["angle"]);
+    if (res < 0) {
+      server->send(400, "application/json",
+                   "{\"message\":\"invalid angle value\"}");
+      return;
+    }
+    server->send(201, "application/json", "");
   }
 
   void listen() {
