@@ -43,9 +43,10 @@ class Controller {
  private:
   /* data */
   static constexpr double taskPeriodMs = 20;
+  static constexpr double taskPeriodSec = 0.02;
 
-  Gain gain = Gain(0.35, 0.035, 0.03);
-  double targetAngle = 90.0;
+  Gain gain = Gain(0.24, 0.02, 0.003);
+  double targetAngle = 91.0;
 
   std::unique_ptr<Motor> motor;
   std::unique_ptr<Imu> imu;
@@ -91,11 +92,14 @@ class Controller {
       if (stopped) {
         continue;
       }
-      eSum += e;
-      auto pV = e * gain.kp;
-      auto iV = eSum * gain.ki;
-      auto dV = (e - ePrev) / taskPeriodMs * gain.kd;
-      inputV = cap(pV) + cap(iV) + cap(dV);
+      eSum += e * taskPeriodSec;
+      auto pV = cap(e * gain.kp, VCC);
+      auto iV = cap(eSum * gain.ki, VCC);
+      auto dV = cap((((e - ePrev) / taskPeriodSec) * gain.kd), VCC);
+      if (abs(iV) == VCC) {
+        eSum = 0;
+      }
+      inputV = cap(pV + iV + dV);
       motor->setVoltage(inputV);
       ePrev = e;
     }

@@ -25,7 +25,7 @@ void setup() {
   StickCP2.Display.setRotation(3);
   StickCP2.Display.setTextDatum(middle_center);
   StickCP2.Display.setFont(&fonts::Orbitron_Light_24);
-  StickCP2.Display.setTextSize(1);
+  StickCP2.Display.setTextSize(0.6);
   wifi.reset(wifiConfig::fromFile());
   wifi->begin();
   StickCP2.Display.setCursor(10, 90);
