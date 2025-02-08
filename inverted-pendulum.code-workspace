@@ -6,6 +6,10 @@
 		{
 			"name": "firm",
 			"path": "firm"
+		},
+		{
+			"name": "web-monitor",
+			"path": "web-apps/monitor"
 		}
 	],
 	"settings": {
