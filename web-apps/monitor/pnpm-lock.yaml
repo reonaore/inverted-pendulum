@@ -14,9 +14,6 @@ importers:
       chartjs-adapter-moment:
         specifier: ^1.0.1
         version: 1.0.1(chart.js@4.4.7)(moment@2.30.1)
-      chartjs-plugin-streaming:
-        specifier: ^2.0.0
-        version: 2.0.0(chart.js@4.4.7)
       moment:
         specifier: ^2.30.1
         version: 2.30.1
@@ -572,11 +569,6 @@ packages:
     peerDependencies:
       chart.js: '>=3.0.0'
       moment: ^2.10.2
-
-  chartjs-plugin-streaming@2.0.0:
-    resolution: {integrity: sha512-oBwHRmovGbPDS1h8PhpttnlKjI6eiJO13v4h+xz+mfbHhIc+iNF9xuMobCIFMKFH7rlVWi5TJAOIxoXyGElYYg==}
-    peerDependencies:
-      chart.js: ^3.0.0
 
   chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
@@ -2219,10 +2211,6 @@ snapshots:
     dependencies:
       chart.js: 4.4.7
       moment: 2.30.1
-
-  chartjs-plugin-streaming@2.0.0(chart.js@4.4.7):
-    dependencies:
-      chart.js: 4.4.7
 
   chokidar@3.6.0:
     dependencies:
