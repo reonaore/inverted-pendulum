@@ -10,6 +10,10 @@
 		{
 			"name": "web-monitor",
 			"path": "web-apps/monitor"
+		},
+		{
+			"name": "ws test server",
+			"path": "web-apps/ws"
 		}
 	],
 	"settings": {
