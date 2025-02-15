@@ -10,9 +10,14 @@
 		{
 			"name": "web-monitor",
 			"path": "web-apps/monitor"
+		},
+		{
+			"name": "ws test server",
+			"path": "web-apps/ws"
 		}
 	],
 	"settings": {
+		"editor.formatOnSave": true,
 		"files.associations": {
 			"*.yml": "yaml",
 			"istream": "cpp",
@@ -81,7 +86,8 @@
 			"system_error": "cpp",
 			"type_traits": "cpp",
 			"utility": "cpp",
-			"cinttypes": "cpp"
+			"cinttypes": "cpp",
+			"*.css": "tailwindcss",
 		},
 		"cSpell.words": [
 			"Kalman",
