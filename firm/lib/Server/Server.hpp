@@ -1,13 +1,19 @@
 #ifndef _SERVER_HPP_
 #define _SERVER_HPP_
 #include <WebServer.h>
+#include <WebSocketsServer.h>
 
 #include <Controller.hpp>
+
+#include "WsResponse.hpp"
 class MyServer {
  private:
   /* data */
-  xTaskHandle taskHandle = 0;
+  xTaskHandle serverTaskHandle = 0;
+  xTaskHandle wsTaskHandle = 0;
+  xTaskHandle broadcastTaskHandle = 0;
   std::unique_ptr<WebServer> server;
+  std::unique_ptr<WebSocketsServer> ws;
   std::shared_ptr<Controller> controller;
 
   void getParameterHandler() {
@@ -53,6 +59,33 @@ class MyServer {
     server->send(201, "application/json", "");
   }
 
+  void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload,
+                      size_t length) {
+    // DO NOTHING
+    return;
+  }
+
+  void broadCast() {
+    auto xLastWakeTime = xTaskGetTickCount();
+    const auto xFrequency = pdMS_TO_TICKS(20);
+
+    while (1) {
+      WsResponse response(controller->getCurrentAngle().x,
+                          controller->getInput(), controller->getTargetAngle());
+
+      auto jsonResponse = response.toJson();
+      ws->broadcastTXT(jsonResponse.c_str());
+      vTaskDelayUntil(&xLastWakeTime, xFrequency);
+    }
+  }
+
+  void listenWs() {
+    while (1) {
+      ws->loop();
+      yield();
+    }
+  }
+
   void listen() {
     while (1) {
       server->handleClient();
@@ -63,10 +96,26 @@ class MyServer {
   static void listenWrapper(void* arg) {
     static_cast<MyServer*>(arg)->listen();
   };
+
+  static void listenWsWrapper(void* arg) {
+    static_cast<MyServer*>(arg)->listenWs();
+  };
+
+  static void broadCastWrapper(void* arg) {
+    static_cast<MyServer*>(arg)->broadCast();
+  };
+
   void start() {
     server->begin();
     xTaskCreate(listenWrapper, "server listen", CONFIG_ARDUINO_LOOP_STACK_SIZE,
-                this, tskIDLE_PRIORITY + 1, &taskHandle);
+                this, tskIDLE_PRIORITY, &serverTaskHandle);
+    ws->begin();
+    xTaskCreate(listenWsWrapper, "ws server listen",
+                CONFIG_ARDUINO_LOOP_STACK_SIZE, this, tskIDLE_PRIORITY,
+                &wsTaskHandle);
+    xTaskCreate(broadCastWrapper, "broadcast data",
+                CONFIG_ARDUINO_LOOP_STACK_SIZE, this, tskIDLE_PRIORITY,
+                &broadcastTaskHandle);
   }
 
  public:
@@ -81,13 +130,24 @@ class MyServer {
                std::bind(&MyServer::getTargetAngleHandler, this));
     server->on("/controller/target-angle", HTTP_POST,
                std::bind(&MyServer::setTargetAngleHandler, this));
+    ws.reset(new WebSocketsServer(port, "ws", "ws"));
+    ws->onEvent(std::bind(&MyServer::webSocketEvent, this,
+                          std::placeholders::_1, std::placeholders::_2,
+                          std::placeholders::_3, std::placeholders::_4));
     start();
   };
   ~MyServer() {
-    if (taskHandle) {
-      vTaskDelete(taskHandle);
+    if (serverTaskHandle) {
+      vTaskDelete(serverTaskHandle);
+    }
+    if (wsTaskHandle) {
+      vTaskDelete(wsTaskHandle);
+    }
+    if (broadcastTaskHandle) {
+      vTaskDelete(broadcastTaskHandle);
     }
     server->stop();
+    ws->close();
   };
 };
 
