@@ -15,13 +15,11 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { RealTimeScale } from "chartjs-plugin-streaming";
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   TimeScale,
-  RealTimeScale,
   PointElement,
   LineElement,
   Title,
