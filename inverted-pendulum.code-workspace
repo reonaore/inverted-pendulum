@@ -1,6 +1,7 @@
 {
 	"folders": [
 		{
+			"name": "root",
 			"path": "."
 		},
 		{
@@ -92,6 +93,12 @@
 		"cSpell.words": [
 			"Kalman",
 			"Madgwick"
-		]
+		],
+		"[markdown]": {
+			"editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+			"editor.codeActionsOnSave": {
+				"source.fixAll.markdownlint": "always"
+			}
+		}
 	}
 }
