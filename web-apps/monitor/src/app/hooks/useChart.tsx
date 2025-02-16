@@ -27,8 +27,8 @@ const useChart = ({
   const updateData = useCallback(
     (message: ControlData) => {
       setData((prev) => {
-        const { target, angle, timestamp } = message;
-        const newLabels = [...(prev.labels ?? []), timestamp];
+        const { target, angle } = message;
+        const newLabels = [...(prev.labels ?? []), new Date().getTime()];
         const newTarget = [...(prev.datasets[0].data ?? []), target];
         const newAngle = [...(prev.datasets[1].data ?? []), angle];
         return {
