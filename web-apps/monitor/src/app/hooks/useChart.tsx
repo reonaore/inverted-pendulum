@@ -19,7 +19,7 @@ const useChart = ({
     close: closeWs,
   } = useWebSocket<ControlData>();
   const [url, setUrl] = useState<string>(defaultUrl ?? "");
-  const [retention, setRetention] = useState<number>(defaultRetention ?? 500);
+  const [retention, setRetention] = useState<number>(defaultRetention ?? 100);
 
   const [data, setData] =
     useState<ChartData<"line", number[], number>>(initData);
@@ -27,10 +27,11 @@ const useChart = ({
   const updateData = useCallback(
     (message: ControlData) => {
       setData((prev) => {
-        const { target, angle } = message;
-        const newLabels = [...(prev.labels ?? []), new Date().getTime()];
+        const { target, angle, time, input } = message;
+        const newLabels = [...(prev.labels ?? []), time];
         const newTarget = [...(prev.datasets[0].data ?? []), target];
         const newAngle = [...(prev.datasets[1].data ?? []), angle];
+        const newVolt = [...(prev.datasets[2].data ?? []), input];
         return {
           labels: newLabels.slice(-retention),
           datasets: [
@@ -41,6 +42,10 @@ const useChart = ({
             {
               ...prev.datasets[1],
               data: newAngle.slice(-retention),
+            },
+            {
+              ...prev.datasets[2],
+              data: newVolt.slice(-retention),
             },
           ],
         };
