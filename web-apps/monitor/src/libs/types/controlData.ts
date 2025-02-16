@@ -1,5 +1,6 @@
 export default interface ControlData {
   target: number;
   angle: number;
-  timestamp: number;
+  input: number;
+  time: number;
 }

@@ -73,12 +73,13 @@ class MyServer {
     auto xLastWakeTime = xTaskGetTickCount();
     const auto xFrequency = pdMS_TO_TICKS(20);
     while (1) {
+      vTaskDelayUntil(&xLastWakeTime, xFrequency);
       WsResponse response(controller->getCurrentAngle().x,
-                          controller->getInput(), controller->getTargetAngle());
+                          controller->getInput(), controller->getTargetAngle(),
+                          xLastWakeTime);
 
       auto jsonResponse = response.toJson();
       ws->textAll(jsonResponse.c_str());
-      vTaskDelayUntil(&xLastWakeTime, xFrequency);
     }
   }
 

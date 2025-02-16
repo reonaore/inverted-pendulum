@@ -41,6 +41,7 @@ export const Chart = () => {
           fill: false,
           pointStyle: false,
           borderJoinStyle: "bevel",
+          yAxisID: "angle",
         },
         {
           label: "current angle",
@@ -50,6 +51,17 @@ export const Chart = () => {
           data: [],
           borderColor: "rgba(75, 192, 192, 1)",
           fill: true,
+          yAxisID: "angle",
+        },
+        {
+          label: "input voltage",
+          type: "line",
+          spanGaps: true,
+          pointStyle: false,
+          data: [],
+          borderColor: "red",
+          fill: true,
+          yAxisID: "voltage",
         },
       ],
     },
@@ -71,6 +83,18 @@ export const Chart = () => {
     },
     scales: {
       x: { type: "time", ticks: { autoSkip: true } },
+      angle: {
+        position: "left",
+        suggestedMax: 110,
+        suggestedMin: 70,
+        title: { display: true, text: "angle" },
+      },
+      voltage: {
+        position: "right",
+        suggestedMin: -5,
+        suggestedMax: 5,
+        title: { display: true, text: "voltage" },
+      },
     },
   };
 
