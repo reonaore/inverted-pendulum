@@ -34,7 +34,7 @@ class MyServer {
         }
         auto gain = control::Gain::fromJson(json.as<JsonObject>());
         controller->updateGain(gain);
-        request->send(201, "application/json", "");
+        request->send(204, "application/json", "");
       };
 
   const ArRequestHandlerFunction getTargetAngleHandler =
@@ -57,7 +57,7 @@ class MyServer {
                         "{\"message\":\"invalid angle value\"}");
           return;
         }
-        request->send(201, "application/json", "");
+        request->send(204, "application/json", "");
       };
 
   void onWebSocketEvent(AsyncWebSocket* server, AsyncWebSocketClient* client,
