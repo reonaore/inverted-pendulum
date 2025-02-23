@@ -23,12 +23,16 @@ class Gain {
     serializeJson(doc, str);
     return str;
   }
+  static Gain fromJson(JsonDocument doc) {
+    // todo: error handling
+    return Gain(doc["kp"], doc["ki"], doc["kd"]);
+  }
 
   static Gain fromJsonString(const char* str) {
     JsonDocument doc;
     // todo: error handling
     deserializeJson(doc, str);
-    return Gain(doc["kp"], doc["ki"], doc["kd"]);
+    return fromJson(doc);
   }
 
   Gain(double kp = 0, double ki = 0, double kd = 0) : kp(kp), ki(ki), kd(kd) {};

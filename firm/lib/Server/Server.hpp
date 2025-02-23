@@ -1,5 +1,6 @@
 #ifndef _SERVER_HPP_
 #define _SERVER_HPP_
+#include <AsyncJson.h>
 #include <ESPAsyncWebServer.h>
 
 #include <Controller.hpp>
@@ -25,16 +26,15 @@ class MyServer {
     request->send(400, "application/json",
                   "{\"message\",\"invalid request body\"}");
   }
-  const ArRequestHandlerFunction setParametersHandler =
-      [this](AsyncWebServerRequest* request) {
-        if (!request->hasArg("plain")) {
+  const ArJsonRequestHandlerFunction setParametersHandler =
+      [this](AsyncWebServerRequest* request, JsonVariant& json) {
+        if (!json.is<JsonObject>()) {
           returnInvalidRequest(request);
           return;
         }
-        auto gain =
-            control::Gain::fromJsonString(request->arg("plain").c_str());
+        auto gain = control::Gain::fromJson(json.as<JsonObject>());
         controller->updateGain(gain);
-        request->send(201, "application/json", "");
+        request->send(204, "application/json", "");
       };
 
   const ArRequestHandlerFunction getTargetAngleHandler =
@@ -44,22 +44,20 @@ class MyServer {
                       "{\"angle\":\"" + String(angle) + "\"}");
       };
 
-  const ArRequestHandlerFunction setTargetAngleHandler =
-      [this](AsyncWebServerRequest* request) {
-        if (!request->hasArg("plain")) {
+  const ArJsonRequestHandlerFunction setTargetAngleHandler =
+      [this](AsyncWebServerRequest* request, JsonVariant& json) {
+        if (!json.is<JsonObject>()) {
           returnInvalidRequest(request);
           return;
         }
-        JsonDocument doc;
-        // todo: error handling
-        deserializeJson(doc, request->arg("plain"));
+        auto doc = json.as<JsonObject>();
         auto res = controller->updateTargetAngle(doc["angle"]);
         if (res < 0) {
           request->send(400, "application/json",
                         "{\"message\":\"invalid angle value\"}");
           return;
         }
-        request->send(201, "application/json", "");
+        request->send(204, "application/json", "");
       };
 
   void onWebSocketEvent(AsyncWebSocket* server, AsyncWebSocketClient* client,
@@ -94,14 +92,24 @@ class MyServer {
                 &broadcastTaskHandle);
   }
 
+  // todo: remove pointer at destructor
+  AsyncCallbackJsonWebHandler* on(const char* uri,
+                                  WebRequestMethodComposite method,
+                                  ArJsonRequestHandlerFunction onRequest) {
+    auto h = new AsyncCallbackJsonWebHandler(uri, setParametersHandler);
+    h->setMethod(HTTP_POST);
+    server->addHandler(h);
+    return h;
+  }
+
  public:
   MyServer(std::shared_ptr<Controller> controller, int port = 8080)
       : controller(controller) {
     server.reset(new AsyncWebServer(port));
     server->on("/controller/parameters", HTTP_GET, getParametersHandler);
-    server->on("/controller/parameters", HTTP_POST, setParametersHandler);
+    on("/controller/parameters", HTTP_POST, setParametersHandler);
     server->on("/controller/target-angle", HTTP_GET, getTargetAngleHandler);
-    server->on("/controller/target-angle", HTTP_POST, setTargetAngleHandler);
+    on("/controller/target-angle", HTTP_POST, setTargetAngleHandler);
     ws.reset(new AsyncWebSocket("/ws"));
     ws->onEvent([this](AsyncWebSocket* server, AsyncWebSocketClient* client,
                        AwsEventType type, void* arg, uint8_t* data,
