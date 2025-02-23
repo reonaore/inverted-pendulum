@@ -46,7 +46,7 @@ class Controller {
   static constexpr double taskPeriodSec = 0.02;
 
   Gain gain = Gain(0.24, 0.02, 0.003);
-  double targetAngle = 91.0;
+  double targetAngle = 90.0;
 
   std::unique_ptr<Motor> motor;
   std::unique_ptr<Imu> imu;
