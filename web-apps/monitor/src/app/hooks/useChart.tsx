@@ -29,9 +29,9 @@ const useChart = ({
       setData((prev) => {
         const { target, angle, time, input } = message;
         const newLabels = [...(prev.labels ?? []), time];
-        const newTarget = [...(prev.datasets[0].data ?? []), target];
-        const newAngle = [...(prev.datasets[1].data ?? []), angle];
-        const newVolt = [...(prev.datasets[2].data ?? []), input];
+        const newTarget = [...(prev.datasets[0]?.data ?? []), target];
+        const newAngle = [...(prev.datasets[1]?.data ?? []), angle];
+        const newVolt = [...(prev.datasets[2]?.data ?? []), input];
         return {
           labels: newLabels.slice(-retention),
           datasets: [
@@ -65,6 +65,10 @@ const useChart = ({
           },
           {
             ...prev.datasets[1],
+            data: [],
+          },
+          {
+            ...prev.datasets[2],
             data: [],
           },
         ],

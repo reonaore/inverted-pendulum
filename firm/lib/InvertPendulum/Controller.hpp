@@ -34,6 +34,7 @@ class Gain {
     deserializeJson(doc, str);
     return fromJson(doc);
   }
+  boolean isZero() { return kp == 0 && kd == 0 && ki == 0; }
 
   Gain(double kp = 0, double ki = 0, double kd = 0) : kp(kp), ki(ki), kd(kd) {};
   ~Gain() {};
