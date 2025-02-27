@@ -89,6 +89,7 @@
 			"utility": "cpp",
 			"cinttypes": "cpp",
 			"*.css": "tailwindcss",
+			"*.env.*": "env",
 		},
 		"cSpell.words": [
 			"Kalman",

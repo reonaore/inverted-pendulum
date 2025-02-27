@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useRef } from "react";
-import { PromiseQueue } from "../../libs/types/promisQueue";
+import { PromiseQueue } from "../../libs/types/promiseQueue";
 
 const useWebSocket = <T>() => {
   const socketRef = useRef<WebSocket>(undefined);

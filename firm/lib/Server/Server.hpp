@@ -33,6 +33,10 @@ class MyServer {
           return;
         }
         auto gain = control::Gain::fromJson(json.as<JsonObject>());
+        if (gain.isZero()) {
+          returnInvalidRequest(request);
+          return;
+        }
         controller->updateGain(gain);
         request->send(204, "application/json", "");
       };
@@ -41,7 +45,7 @@ class MyServer {
       [this](AsyncWebServerRequest* request) {
         auto angle = controller->getTargetAngle();
         request->send(200, "application/json",
-                      "{\"angle\":\"" + String(angle) + "\"}");
+                      "{\"angle\":" + String(angle) + "}");
       };
 
   const ArJsonRequestHandlerFunction setTargetAngleHandler =
@@ -96,7 +100,7 @@ class MyServer {
   AsyncCallbackJsonWebHandler* on(const char* uri,
                                   WebRequestMethodComposite method,
                                   ArJsonRequestHandlerFunction onRequest) {
-    auto h = new AsyncCallbackJsonWebHandler(uri, setParametersHandler);
+    auto h = new AsyncCallbackJsonWebHandler(uri, onRequest);
     h->setMethod(HTTP_POST);
     server->addHandler(h);
     return h;

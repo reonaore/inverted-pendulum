@@ -29,7 +29,7 @@ ChartJS.register(
 
 export const Chart = () => {
   const { data, connect, close, url, setUrl } = useChart({
-    defaultUrl: "ws://localhost:3001",
+    defaultUrl: process.env.NEXT_PUBLIC_WS_URL + "/ws",
     initData: {
       labels: [],
       datasets: [
@@ -99,11 +99,8 @@ export const Chart = () => {
   };
 
   return (
-    <div className="p-4 space-y-4">
-      <div className="bg-white">
-        <Line options={options} data={data} />;
-      </div>
-      <div className="flex justify-center space-x-4">
+    <div className="space-y-4">
+      <div className="flex justify-end space-x-4">
         <input
           className="w-[240]px bg-transparent placeholder:text-slate-400 text-slate-100 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 "
           onChange={(e) => setUrl(e.target.value)}
@@ -126,6 +123,10 @@ export const Chart = () => {
         >
           close
         </button>
+      </div>
+
+      <div className="bg-white">
+        <Line options={options} data={data} />;
       </div>
     </div>
   );
