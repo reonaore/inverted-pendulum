@@ -36,4 +36,8 @@ void setup() {
   server.reset(new MyServer(ctrl));
 }
 
-void loop() { delay(1000); }
+extern "C" void app_main() {
+  // initialize arduino library before we start the tasks
+  initArduino();
+  setup();
+}

@@ -120,9 +120,9 @@ class Controller {
  public:
   void updateGain(Gain newOne) { this->gain = newOne; }
   const Gain getGain() { return this->gain; }
-  const double getInput() { return inputV; };
+  double getInput() { return inputV; };
   const imu_3d_t getCurrentAngle() { return currentAngle; }
-  const double getTargetAngle() { return targetAngle; }
+  double getTargetAngle() { return targetAngle; }
   int updateTargetAngle(double angle) {
     if (angle > 110 || angle < 70) {
       return -1;
@@ -130,7 +130,7 @@ class Controller {
     targetAngle = angle;
     return 0;
   }
-  Controller(Motor* motor, Imu* imu) : imu(imu), motor(motor) { start(); };
+  Controller(Motor* motor, Imu* imu) : motor(motor), imu(imu) { start(); };
   ~Controller() {
     if (taskHandle) {
       vTaskDelete(taskHandle);
