@@ -38,6 +38,7 @@ class wifiConfig {
     }
   }
   void begin() {
+    WiFi.mode(WIFI_STA);
     WiFi.hostname(HOST_NAME);
     WiFi.begin(ssid.c_str(), password.c_str());
     while (WiFi.status() != WL_CONNECTED) {

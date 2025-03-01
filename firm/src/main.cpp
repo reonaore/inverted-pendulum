@@ -7,6 +7,7 @@
 #include <Controller.hpp>
 #include <Imu.hpp>
 #include <Motor.hpp>
+#include <OtaHandler.hpp>
 #include <PwmController.hpp>
 #include <Server.hpp>
 #include <wifiConfig.hpp>
@@ -34,6 +35,7 @@ void setup() {
   auto imu = new Imu();
   ctrl.reset(new Controller(motor, imu));
   server.reset(new MyServer(ctrl));
+  OtaHandler.startHandling();
 }
 
 extern "C" void app_main() {
