@@ -90,7 +90,8 @@
 			"cinttypes": "cpp",
 			"*.css": "tailwindcss",
 			"*.env.*": "env",
-			"regex": "cpp"
+			"regex": "cpp",
+			"set": "cpp"
 		},
 		"cSpell.words": [
 			"Kalman",
