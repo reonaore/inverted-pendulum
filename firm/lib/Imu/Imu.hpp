@@ -17,7 +17,7 @@ class Imu {
   imu_3d_t angle = {0};
   imu_3d_t angleMadgwick = {0};
   imu_3d_t gyroOffset = {0};
-  imu_data_t data = {0};
+  imu_data_t data = {0, {0}};
 
   static imu_3d_t calcDegreeFromAccel(imu_3d_t accel) {
     imu_3d_t res = {0};
