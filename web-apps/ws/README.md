@@ -2,4 +2,4 @@
 
 ## How to run
 
-* Run `pnpm run server`
+* Run `pnpm run dev`
