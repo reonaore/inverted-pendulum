@@ -1,0 +1,11 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "run test ws server",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "pnpm run server"
+        },
+    ]
+}
