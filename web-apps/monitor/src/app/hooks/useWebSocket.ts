@@ -37,7 +37,12 @@ const useWebSocket = <T>() => {
     [close]
   );
 
-  return { receive: queue.current.receive, connect, close };
+  return {
+    receive: queue.current.receive,
+    connect,
+    close,
+    isConnected: !!socketRef.current,
+  };
 };
 
 export default useWebSocket;

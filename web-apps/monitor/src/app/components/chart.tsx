@@ -6,7 +6,6 @@ import { Line } from "react-chartjs-2";
 import useChart from "../hooks/useChart";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -18,6 +17,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
+import ParameterController from "./parameter-controller";
 
 ChartJS.register(
   CategoryScale,
@@ -99,7 +99,7 @@ const options: ChartOptions<"line"> = {
 };
 
 export const Chart = () => {
-  const { connect, close, url, setUrl, chartRef } = useChart({
+  const { connect, close, chartRef, isConnected } = useChart({
     defaultUrl: process.env.NEXT_PUBLIC_WS_URL + "/ws",
     initData: initData,
   });
@@ -107,29 +107,28 @@ export const Chart = () => {
   return (
     <div className="space-y-4">
       <div className="flex justify-end space-x-4">
-        <Input
-          className="w-96"
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="input url"
-          value={url}
-        />
-        <Button
-          onClick={() => {
-            connect();
-          }}
-        >
-          connect
-        </Button>
-        <Button
-          variant={"destructive"}
-          onClick={() => {
-            close();
-          }}
-        >
-          close
-        </Button>
+        <ParameterController />
+        {isConnected ? (
+          <Button
+            className="w-32"
+            variant={"destructive"}
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        ) : (
+          <Button
+            className="w-32"
+            onClick={() => {
+              connect();
+            }}
+          >
+            connect
+          </Button>
+        )}
       </div>
-
       <div>
         <Line ref={chartRef} options={options} data={initData} />;
       </div>

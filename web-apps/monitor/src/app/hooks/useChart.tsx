@@ -17,6 +17,7 @@ const useChart = ({
     receive,
     connect: connectWs,
     close: closeWs,
+    isConnected,
   } = useWebSocket<ControlData>();
   const [url, setUrl] = useState<string | undefined>(defaultUrl);
   const [retention, setRetention] = useState<number>(defaultRetention ?? 100);
@@ -124,6 +125,7 @@ const useChart = ({
     setUrl,
     setRetention,
     chartRef,
+    isConnected,
   };
 };
 
