@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Settings } from "lucide-react";
 import { toast } from "sonner";
 
 const defaultControlData: ControlData = {
@@ -71,7 +72,9 @@ const ParameterController = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="default">Change Parameters</Button>
+        <Button variant="secondary">
+          <Settings /> Change Parameters
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
