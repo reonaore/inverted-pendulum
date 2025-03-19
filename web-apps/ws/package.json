@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": ">=18.17.1"
+  },
+  "packageManager": "pnpm@10.6.4",
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/server.js",
@@ -14,17 +18,16 @@
   "dependencies": {
     "express": "^4.21.2",
     "express-ws": "^5.0.2",
-    "ws": "^8.18.0"
+    "ws": "^8.18.1"
   },
   "devDependencies": {
-    "@faker-js/faker": "^9.4.0",
+    "@faker-js/faker": "^9.6.0",
     "@types/express": "^5.0.0",
     "@types/express-ws": "^3.0.5",
-    "@types/node": "^10.11.4",
+    "@types/node": "^22.13.10",
     "@types/ws": "^8.18.0",
     "eslint": "^9.22.0",
-    "ts-node": "^7.0.1",
-    "tslint": "^5.11.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
   }
 }
