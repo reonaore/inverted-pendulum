@@ -1,5 +1,8 @@
 "use client";
 import { updateControlData } from "@/actions/actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { use, useCallback, useState } from "react";
 import { ControlData, useControlData } from "../hooks/useControlData";
 
@@ -21,9 +24,8 @@ const InputControlParam = ({
 }) => {
   return (
     <div className="flex items-center space-x-2">
-      <label htmlFor={label}>{label}</label>
-      <input
-        className="w-16 border border-gray-300 rounded-md text-white bg-gray-800"
+      <Label htmlFor={label}>{label}</Label>
+      <Input
         id={label}
         type="number"
         value={value}
@@ -78,12 +80,7 @@ const ParameterController = () => {
           setData({ ...data, target: target });
         }}
       />
-      <button
-        className="px-4 py-2 bg-blue-500 text-white rounded-md"
-        onClick={handleSubmit}
-      >
-        Submit
-      </button>
+      <Button onClick={handleSubmit}>Submit</Button>
     </div>
   );
 };

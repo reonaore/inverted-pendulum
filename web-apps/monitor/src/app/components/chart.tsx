@@ -5,6 +5,8 @@ import "chartjs-adapter-moment";
 import { Line } from "react-chartjs-2";
 import useChart from "../hooks/useChart";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -105,31 +107,30 @@ export const Chart = () => {
   return (
     <div className="space-y-4">
       <div className="flex justify-end space-x-4">
-        <input
-          className="w-[240]px bg-transparent placeholder:text-slate-400 text-slate-100 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 "
+        <Input
+          className="w-96"
           onChange={(e) => setUrl(e.target.value)}
           placeholder="input url"
           value={url}
         />
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        <Button
           onClick={() => {
             connect();
           }}
         >
           connect
-        </button>
-        <button
-          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        </Button>
+        <Button
+          variant={"destructive"}
           onClick={() => {
             close();
           }}
         >
           close
-        </button>
+        </Button>
       </div>
 
-      <div className="bg-white">
+      <div>
         <Line ref={chartRef} options={options} data={initData} />;
       </div>
     </div>
