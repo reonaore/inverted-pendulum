@@ -18,7 +18,7 @@ wsRouter.ws("/", (ws, req) => {
       return;
     }
     const message = JSON.stringify({
-      angle: faker.number.float({ min: 60, max: 120 }),
+      angle: faker.number.float({ min: 70, max: 110 }),
       input: faker.number.float({ min: -5, max: 5 }),
       target: 90,
       time: counter++ * intervalMs,

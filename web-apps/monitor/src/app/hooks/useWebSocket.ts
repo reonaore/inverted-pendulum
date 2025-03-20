@@ -41,7 +41,6 @@ const useWebSocket = <T>() => {
     receive: queue.current.receive,
     connect,
     close,
-    isConnected: !!socketRef.current,
   };
 };
 

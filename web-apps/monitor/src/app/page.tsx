@@ -4,7 +4,7 @@ import { ControlDataProvider } from "./hooks/useControlData";
 
 const Page = () => {
   return (
-    <div className="p-6 space-y-4">
+    <div className="px-8 py-4">
       <ControlDataProvider parameterPromise={getControlData()}>
         <Chart />
       </ControlDataProvider>
