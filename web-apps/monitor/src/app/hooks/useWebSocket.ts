@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useRef } from "react";
+import { toast } from "sonner";
 import { PromiseQueue } from "../../libs/types/promiseQueue";
 
 const useWebSocket = <T>() => {
@@ -8,7 +9,7 @@ const useWebSocket = <T>() => {
 
   const close = useCallback(() => {
     if (!socketRef.current) {
-      alert("already closed");
+      toast.error("already closed");
       return;
     }
     socketRef?.current?.close();
@@ -19,7 +20,7 @@ const useWebSocket = <T>() => {
   const connect = useCallback(
     (url: string) => {
       if (socketRef.current) {
-        alert("already connected");
+        toast.error("already connected");
         return;
       }
 
@@ -29,7 +30,7 @@ const useWebSocket = <T>() => {
       };
       ws.onerror = (event) => {
         console.error(event);
-        alert("an error occurred. please check the console");
+        toast.error("an error occurred. please check the console");
         close();
       };
       socketRef.current = ws;
