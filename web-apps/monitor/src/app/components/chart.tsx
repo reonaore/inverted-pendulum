@@ -79,6 +79,7 @@ export const Chart = () => {
             strokeWidth={1}
             stroke="var(--color-angle)"
             dot={false}
+            isAnimationActive={false}
           />
           <Line
             yAxisId="angle"
@@ -87,6 +88,7 @@ export const Chart = () => {
             strokeWidth={1}
             stroke="var(--color-target)"
             dot={false}
+            isAnimationActive={false}
           />
           <Line
             yAxisId="voltage"
@@ -95,6 +97,7 @@ export const Chart = () => {
             strokeWidth={1}
             stroke="var(--color-input)"
             dot={false}
+            isAnimationActive={false}
           />
           <Brush
             dataKey={"time"}
@@ -112,6 +115,7 @@ export const Chart = () => {
                 strokeWidth={1}
                 stroke="var(--color-angle)"
                 dot={false}
+                isAnimationActive={false}
               />
               <Line
                 yAxisId="angle"
@@ -120,6 +124,7 @@ export const Chart = () => {
                 strokeWidth={1}
                 stroke="var(--color-target)"
                 dot={false}
+                isAnimationActive={false}
               />
             </LineChart>
           </Brush>
