@@ -11,10 +11,10 @@
 class wifiConfig {
  private:
   /* data */
-  static wifiConfig* fromJsonFile(File stream) {
+  static wifiConfig fromJsonFile(File stream) {
     JsonDocument doc;
     deserializeJson(doc, stream);
-    return new wifiConfig(doc["ssid"], doc["password"]);
+    return wifiConfig(doc["ssid"], doc["password"]);
   }
   wifiConfig(const char* ssid, const char* password)
       : ssid(ssid), password(password) {};
@@ -22,7 +22,7 @@ class wifiConfig {
  public:
   String ssid;
   String password;
-  static wifiConfig* fromFile(const char* filePath = "/wifi-config.json") {
+  static wifiConfig fromFile(const char* filePath = "/wifi-config.json") {
     if (!SPIFFS.exists(filePath)) {
       throw "file not exist";
     }
@@ -46,7 +46,7 @@ class wifiConfig {
       delay(500);
     }
   }
-  wifiConfig() = delete;
+  wifiConfig() {};
   ~wifiConfig() {};
 };
 

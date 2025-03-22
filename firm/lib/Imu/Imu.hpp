@@ -12,10 +12,8 @@ class Imu {
   static constexpr double dt = 0.005;  // sec
   Kalman kalmanFilterX, kalmanFilterY;
   Madgwick filter;
-  xTaskHandle kalmanTaskHandle = 0;
-  xTaskHandle madgwickTaskHandle = 0;
+  xTaskHandle taskHandle = 0;
   imu_3d_t angle = {0};
-  imu_3d_t angleMadgwick = {0};
   imu_3d_t gyroOffset = {0};
   imu_data_t data = {0, {0}};
 
@@ -28,12 +26,9 @@ class Imu {
   }
 
   void createTask() {
-    xTaskCreate(taskEntryKalman, "update imu task kalman",
+    xTaskCreate(taskEntry, "update imu task kalman",
                 CONFIG_ARDUINO_LOOP_STACK_SIZE, this, tskIDLE_PRIORITY + 1,
-                &kalmanTaskHandle);
-    xTaskCreate(taskEntryMadgwick, "update imu task madgwick",
-                CONFIG_ARDUINO_LOOP_STACK_SIZE, this, tskIDLE_PRIORITY + 1,
-                &madgwickTaskHandle);
+                &taskHandle);
   }
 
   void calibration() {
@@ -63,10 +58,11 @@ class Imu {
     auto xLastWakeTime = xTaskGetTickCount();
     while (1) {
       vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(taskPeriodMs));
+      updateImuData();
       filter.updateIMU(data.gyro.x, data.gyro.y, data.gyro.z, data.accel.x,
                        data.accel.y, data.accel.z);
-      // this->angle.x = filter.getRoll();
-      // this->angle.y = filter.getPitch();
+      this->angle.x = filter.getRoll();
+      this->angle.y = filter.getPitch();
     }
   }
 
@@ -102,26 +98,23 @@ class Imu {
     }
   }
 
-  static void taskEntryKalman(void* arg) {
+  static void taskEntry(void* arg) {
     static_cast<Imu*>(arg)->vUpdateImuKalman();
-  }
-  static void taskEntryMadgwick(void* arg) {
-    static_cast<Imu*>(arg)->vUpdateImuMadgwick();
+    // static_cast<Imu*>(arg)->vUpdateImuMadgwick();
   }
 
  public:
-  Imu() {
+  Imu() {};
+  ~Imu() { end(); }
+  void begin() {
     M5.Imu.begin();
     createTask();
     delay(taskPeriodMs * 2);
     calibration();
-  };
-  ~Imu() {
-    if (kalmanTaskHandle) {
-      vTaskDelete(kalmanTaskHandle);
-    }
-    if (madgwickTaskHandle) {
-      vTaskDelete(madgwickTaskHandle);
+  }
+  void end() {
+    if (taskHandle) {
+      vTaskDelete(taskHandle);
     }
   }
 
