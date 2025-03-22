@@ -16,8 +16,8 @@ PwmController front(PwmChannels::CH0, IoPins::IO0);
 PwmController back(PwmChannels::CH1, IoPins::IO26);
 Motor motor(front, back);
 Imu imu = Imu();
-Controller ctrl(motor, imu);
-MyServer server(ctrl);
+Controller controller(motor, imu);
+MyServer server(controller);
 wifiConfig wifi;
 
 void setup() {
