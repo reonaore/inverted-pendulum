@@ -4,27 +4,35 @@
 #include <M5StickCPlus2.h>
 
 #include <hardware.hpp>
+#include <map>
 
 #include "PwmChannel.hpp"
 #include "pin.hpp"
 
+enum PwmResolutionBits {
+  bits_10 = 10,
+  bits_11 = 11,
+  bits_12 = 12,
+};
+
+const std::map<PwmResolutionBits, uint16_t> resolutionByBit = {
+    {bits_10, 1024}, {bits_11, 2048}, {bits_12, 4096}};
+const std::map<PwmResolutionBits, uint32_t> frequencyByBit = {
+    {bits_10, 78125}, {bits_11, 39062}, {bits_12, 19531}};
+
 class PwmController {
  private:
-  static const uint8_t defaultResolutionBit = 10;  // bit
-  // todo: set below 2 from bits
-  static const uint32_t defaultFrequency = 78125;  // Hz
-  static const uint16_t resolution = 1024;
-
   /* data */
+  const uint16_t resolution;
   const uint32_t freq;
   const uint8_t pwmCh;
-  const uint8_t resolutionBits;
+  const PwmResolutionBits bits;
   const uint8_t pinNo;
   const double dutyStep;
 
   void begin() {
     pinMode(pinNo, OUTPUT);
-    ledcSetup(pwmCh, freq, resolutionBits);
+    ledcSetup(pwmCh, freq, bits);
     ledcAttachPin(pinNo, pwmCh);
     setDutyByVoltage(0);
   }
@@ -39,10 +47,12 @@ class PwmController {
     ledcWrite(pwmCh, duty);
   }
   PwmController() = delete;
-  PwmController(PwmChannels pwmCh, IoPins pinNo)
-      : freq(defaultFrequency),
+  PwmController(PwmChannels pwmCh, IoPins pinNo,
+                PwmResolutionBits bits = bits_10)
+      : resolution(resolutionByBit.at(bits)),
+        freq(frequencyByBit.at(bits)),
         pwmCh(pwmCh),
-        resolutionBits(defaultResolutionBit),
+        bits(bits),
         pinNo(pinNo),
         dutyStep(resolution / VCC) {
     begin();
