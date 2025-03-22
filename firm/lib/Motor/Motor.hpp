@@ -6,51 +6,34 @@
 class Motor {
  private:
   /* data */
-  static const uint8_t resolutionBit = 10;  // bit
-  static const uint16_t resolution = 1024;
-  static const uint32_t pwmFrequency = 78125;  // Hz
-  static constexpr double dutyStep = (resolution / VCC);
-  const std::unique_ptr<PwmController> front;
-  const std::unique_ptr<PwmController> back;
+  static constexpr double offsetVoltage = 0.7;
+  PwmController &front;
+  PwmController &back;
 
  public:
-  static uint16_t duty(double v) {
-    auto duty = abs(v) * dutyStep;
-    if (duty >= (double)resolution) {
-      duty = (double)resolution;
-    }
-    return round(duty);
-  }
-
   Motor() = delete;
-  Motor(PwmController *front, PwmController *back) : front(front), back(back) {
-    this->setVoltage(0);
+  Motor(PwmController &front, PwmController &back) : front(front), back(back) {
+    setVoltage(0);
   };
-  static Motor *create(IoPins front, IoPins back) {
-    auto f =
-        new PwmController(PwmChannels::CH0, front, pwmFrequency, resolutionBit);
-    auto b =
-        new PwmController(PwmChannels::CH1, back, pwmFrequency, resolutionBit);
-    return new Motor(f, b);
-  }
-  uint16_t setVoltage(double v) {
+  double setVoltage(double v) {
     if (v != 0) {
       if (v > 0) {
-        v += 0.7;
+        v += offsetVoltage;
       } else {
-        v -= 0.7;
+        v -= offsetVoltage;
       }
     }
-    auto d = duty(v);
     if (v >= 0) {
-      front->setDuty(d);
-      back->setDuty(0);
+      front.setDutyByVoltage(v);
+      back.setDutyByVoltage(0);
     } else {
-      front->setDuty(0);
-      back->setDuty(d);
+      front.setDutyByVoltage(0);
+      back.setDutyByVoltage(v);
     }
-    return d;
+    return v;
   }
-  ~Motor() { this->setVoltage(0); };
+
+  void stop() { setVoltage(0); }
+  ~Motor() { stop(); };
 };
 #endif

@@ -12,13 +12,13 @@ class MyServer {
   xTaskHandle serverTaskHandle = 0;
   xTaskHandle wsTaskHandle = 0;
   xTaskHandle broadcastTaskHandle = 0;
+  Controller& controller;
   std::unique_ptr<AsyncWebServer> server;
   std::unique_ptr<AsyncWebSocket> ws;
-  std::shared_ptr<Controller> controller;
 
   const ArRequestHandlerFunction getParametersHandler =
       [this](AsyncWebServerRequest* request) {
-        auto gain = controller->getGain();
+        auto gain = controller.getGain();
         request->send(200, "application/json", gain.toJson());
       };
 
@@ -37,13 +37,13 @@ class MyServer {
           returnInvalidRequest(request);
           return;
         }
-        controller->updateGain(gain);
+        controller.updateGain(gain);
         request->send(204, "application/json", "");
       };
 
   const ArRequestHandlerFunction getTargetAngleHandler =
       [this](AsyncWebServerRequest* request) {
-        auto angle = controller->getTargetAngle();
+        auto angle = controller.getTargetAngle();
         request->send(200, "application/json",
                       "{\"angle\":" + String(angle) + "}");
       };
@@ -55,7 +55,7 @@ class MyServer {
           return;
         }
         auto doc = json.as<JsonObject>();
-        auto res = controller->updateTargetAngle(doc["angle"]);
+        auto res = controller.updateTargetAngle(doc["angle"]);
         if (res < 0) {
           request->send(400, "application/json",
                         "{\"message\":\"invalid angle value\"}");
@@ -76,9 +76,8 @@ class MyServer {
     const auto xFrequency = pdMS_TO_TICKS(20);
     while (1) {
       vTaskDelayUntil(&xLastWakeTime, xFrequency);
-      WsResponse response(controller->getCurrentAngle().x,
-                          controller->getInput(), controller->getTargetAngle(),
-                          xLastWakeTime);
+      WsResponse response(controller.getCurrentAngle().x, controller.getInput(),
+                          controller.getTargetAngle(), xLastWakeTime);
 
       auto jsonResponse = response.toJson();
       ws->textAll(jsonResponse.c_str());
@@ -89,39 +88,50 @@ class MyServer {
     static_cast<MyServer*>(arg)->broadCast();
   };
 
-  void start() {
-    server->begin();
-    xTaskCreate(broadCastWrapper, "broadcast data",
-                CONFIG_ARDUINO_LOOP_STACK_SIZE, this, tskIDLE_PRIORITY,
-                &broadcastTaskHandle);
-  }
-
   // todo: remove pointer at destructor
   AsyncCallbackJsonWebHandler* on(const char* uri,
                                   WebRequestMethodComposite method,
                                   ArJsonRequestHandlerFunction onRequest) {
     auto h = new AsyncCallbackJsonWebHandler(uri, onRequest);
     h->setMethod(HTTP_POST);
-    server->addHandler(h);
     return h;
   }
 
- public:
-  MyServer(std::shared_ptr<Controller> controller, int port = 8080)
-      : controller(controller) {
-    server.reset(new AsyncWebServer(port));
-    server->on("/controller/parameters", HTTP_GET, getParametersHandler);
-    on("/controller/parameters", HTTP_POST, setParametersHandler);
-    server->on("/controller/target-angle", HTTP_GET, getTargetAngleHandler);
-    on("/controller/target-angle", HTTP_POST, setTargetAngleHandler);
-    ws.reset(new AsyncWebSocket("/ws"));
+  AsyncWebSocket* createWebSocket() {
+    auto ws = new AsyncWebSocket("/ws");
     ws->onEvent([this](AsyncWebSocket* server, AsyncWebSocketClient* client,
                        AwsEventType type, void* arg, uint8_t* data,
                        size_t len) {
       this->onWebSocketEvent(server, client, type, arg, data, len);
     });
+    return ws;
+  }
+
+  AsyncWebServer* createAsyncWebServer(int port) {
+    auto server = new AsyncWebServer(port);
+    server->on("/controller/parameters", HTTP_GET, getParametersHandler);
+    server->addHandler(
+        on("/controller/parameters", HTTP_POST, setParametersHandler));
+    server->on("/controller/target-angle", HTTP_GET, getTargetAngleHandler);
+    server->addHandler(
+        on("/controller/target-angle", HTTP_POST, setTargetAngleHandler));
+    return server;
+  }
+
+ public:
+  void begin() {
+    controller.begin();
+    server->begin();
+    xTaskCreate(broadCastWrapper, "broadcast data",
+                CONFIG_ARDUINO_LOOP_STACK_SIZE, this, tskIDLE_PRIORITY,
+                &broadcastTaskHandle);
+  }
+  MyServer() = delete;
+  MyServer(Controller& controller, int port = 8080) : controller(controller) {
+    ws.reset(createWebSocket());
+    server.reset(createAsyncWebServer(port));
+
     server->addHandler(ws.get());
-    start();
   };
   ~MyServer() {
     if (serverTaskHandle) {
