@@ -53,8 +53,8 @@ class Controller {
   Gain gain = Gain(0.24, 0.02, 0.003);
   double targetAngle = 90.0;
 
-  std::unique_ptr<Motor> motor;
-  std::unique_ptr<Imu> imu;
+  Motor& motor;
+  Imu& imu;
 
   xTaskHandle taskHandle = 0;
   double ePrev = 0.0;
@@ -66,13 +66,13 @@ class Controller {
     inputV = 0.0;
     ePrev = 0;
     eSum = 0;
-    motor->setVoltage(inputV);
+    motor.stop();
     stopped = true;
   }
   // for graph
   imu_3d_t currentAngle;
   imu_3d_t getAngle() {
-    currentAngle = imu->getAngle();
+    currentAngle = imu.getAngle();
     return currentAngle;
   }
   double cap(double input, double cap = 5.0) {
@@ -104,17 +104,12 @@ class Controller {
       if (abs(iV) == VCC) {
         eSum = 0;
       }
-      inputV = cap(pV + iV + dV);
-      motor->setVoltage(inputV);
+      inputV = motor.setVoltage(cap(pV + iV + dV));
       ePrev = e;
     }
   }
   static void taskEntry(void* arg) {
     static_cast<Controller*>(arg)->mainLoop();
-  }
-  void start() {
-    xTaskCreate(taskEntry, "main control loop", CONFIG_ARDUINO_LOOP_STACK_SIZE,
-                this, tskIDLE_PRIORITY + 4, &taskHandle);
   }
 
  public:
@@ -130,12 +125,22 @@ class Controller {
     targetAngle = angle;
     return 0;
   }
-  Controller(Motor* motor, Imu* imu) : motor(motor), imu(imu) { start(); };
-  ~Controller() {
+
+  void begin() {
+    motor.stop();
+    imu.begin();
+    xTaskCreate(taskEntry, "main control loop", CONFIG_ARDUINO_LOOP_STACK_SIZE,
+                this, tskIDLE_PRIORITY + 4, &taskHandle);
+  }
+  void stop() {
+    motor.stop();
     if (taskHandle) {
       vTaskDelete(taskHandle);
     }
-  };
+  }
+  Controller() = delete;
+  Controller(Motor& motor, Imu& imu) : motor(motor), imu(imu) {};
+  ~Controller() { stop(); };
 };
 
 #endif

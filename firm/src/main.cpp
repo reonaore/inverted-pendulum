@@ -12,9 +12,13 @@
 #include <Server.hpp>
 #include <wifiConfig.hpp>
 
-std::shared_ptr<Controller> ctrl;
-std::unique_ptr<MyServer> server;
-std::unique_ptr<wifiConfig> wifi;
+PwmController front(PwmChannels::CH0, IoPins::IO0);
+PwmController back(PwmChannels::CH1, IoPins::IO26);
+Motor motor(front, back);
+Imu imu = Imu();
+Controller controller(motor, imu);
+MyServer server(controller);
+wifiConfig wifi;
 
 void setup() {
   auto config = M5.config();
@@ -27,15 +31,11 @@ void setup() {
   StickCP2.Display.setTextDatum(middle_center);
   StickCP2.Display.setFont(&fonts::Orbitron_Light_24);
   StickCP2.Display.setTextSize(0.6);
-  wifi.reset(wifiConfig::fromFile());
-  wifi->begin();
+  wifiConfig::fromFile().begin();
   StickCP2.Display.setCursor(10, 90);
   StickCP2.Display.println("local IP: " + WiFi.localIP().toString());
-  auto motor = Motor::create(IoPins::IO0, IoPins::IO26);
-  auto imu = new Imu();
-  ctrl.reset(new Controller(motor, imu));
-  server.reset(new MyServer(ctrl));
   OtaHandler.startHandling();
+  server.begin();
 }
 
 extern "C" void app_main() {
